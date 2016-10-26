@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     Button btn_start, btn_stop;
     private SensorManager sensorManager;
     private MySensorEventListener sensorEventListener;
-    Sensor acceSensor, gyroSensor, magSensor;
+    Sensor accSensor, gyroSensor, magSensor;
 
     float[] acc;
     float[] gyro;
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         //get sensor manage
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-        acceSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         magSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(sensorEventListener, acceSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(sensorEventListener, accSensor, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(sensorEventListener, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(sensorEventListener, magSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -64,12 +64,9 @@ public class MainActivity extends AppCompatActivity {
     private final class MySensorEventListener implements SensorEventListener
     {
 
-
-        //可以得到传感器实时测量出来的变化值
         @Override
         public void onSensorChanged(SensorEvent event)
         {
-            //得到加速度的值
             if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER)
             {
                 acc = event.values;
