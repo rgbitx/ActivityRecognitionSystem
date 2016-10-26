@@ -25,8 +25,7 @@
             android:layout_marginRight="20dp"
             android:text="Start"
             android:textSize="30dp"
-            android:textAllCaps="false"
-            android:onClick="ButtonClickStartActivity"/>
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/btn_stop"
@@ -34,8 +33,7 @@
             android:layout_height="wrap_content"
             android:text="Stop"
             android:textSize="30dp"
-            android:textAllCaps="false"
-            android:onClick="ButtonClick_StopActivity"/>
+            android:textAllCaps="false" />
     </LinearLayout>
 
     <LinearLayout
