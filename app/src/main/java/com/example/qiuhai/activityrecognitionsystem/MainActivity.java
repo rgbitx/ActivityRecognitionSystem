@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View v) {
 
-                sensorManager.registerListener(MainActivity.this, accSensor, SensorManager.SENSOR_DELAY_GAME);
 //                sensorManager.registerListener(MainActivity.this, gyroSensor, SensorManager.SENSOR_DELAY_GAME);
 //                sensorManager.registerListener(MainActivity.this, magSensor, SensorManager.SENSOR_DELAY_GAME);
 
@@ -93,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     protected void onResume() {
         super.onResume();
+        sensorManager.registerListener(MainActivity.this, accSensor, SensorManager.SENSOR_DELAY_GAME);
     }
 
     protected void onPause() {
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     @Override
-    public void onSensorChanged(SensorEvent event) {
+    public void onSensorChanged(SensorEvent event)  {
         if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER)
         {
             acc = event.values;
@@ -128,14 +128,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         measureInstance.setClassIndex(12);
 
                         // set measurement to instance values
-                        double[] instanceValue = new double[12];
+                        double[] instanceValue = new double[13];
 
                         // set measure value to each attribution in the instance
                         setInstanceAttributionValues(instanceValue,mean,std,max,min);
 
                         measureInstance.add(new DenseInstance(1.0,instanceValue));
 
-                        String loadModelName = "svm_model_history_fall.model";
+                        String loadModelName = "knnmodel.model";
+
+                        try {
+                            activityRegModel(loadModelName,measureInstance);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
 
 
                     }
@@ -223,6 +230,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         double value = cls.classifyInstance(measureInstance.instance(pos));
+
+        System.out.println(measureInstance.classAttribute().value((int)value));
 
 
     }
