@@ -135,6 +135,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                         measureInstance.add(new DenseInstance(1.0,instanceValue));
 
+                        String loadModelName = "svm_model_history_fall.model";
+
+
                     }
 
                 }
