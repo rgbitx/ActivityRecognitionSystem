@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 isCal = false;
                 sensorManager.unregisterListener(MainActivity.this);
 
-                tv_stand.setBackgroundColor(Color.GREEN);
+                tv_stand.setBackgroundColor(Color.LTGRAY);
                 tv_walk.setBackgroundColor(Color.LTGRAY);
                 tv_run.setBackgroundColor(Color.LTGRAY);
                 tv_cycle.setBackgroundColor(Color.LTGRAY);
