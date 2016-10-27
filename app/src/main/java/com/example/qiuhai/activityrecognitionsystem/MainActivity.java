@@ -1,5 +1,6 @@
 package com.example.qiuhai.activityrecognitionsystem;
 
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -22,6 +24,7 @@ import weka.core.Instances;
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     Button btn_start, btn_stop;
+    TextView tv_stand, tv_walk, tv_run, tv_cycle, tv_incar;
     private SensorManager sensorManager;
     Sensor accSensor, gyroSensor, magSensor;
 
@@ -45,6 +48,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         btn_start = (Button) findViewById(R.id.btn_start);
         btn_stop = (Button) findViewById(R.id.btn_stop);
+
+        tv_stand = (TextView) findViewById(R.id.tv_stand);
+        tv_walk = (TextView) findViewById(R.id.tv_walk);
+        tv_run = (TextView) findViewById(R.id.tv_run);
+        tv_cycle = (TextView) findViewById(R.id.tv_cycle);
+        tv_incar = (TextView) findViewById(R.id.tv_incar);
 
         accBuffer = new ArrayList<>();
         count = 0;
@@ -85,6 +94,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick(View v) {
                 isCal = false;
                 sensorManager.unregisterListener(MainActivity.this);
+
+                tv_stand.setBackgroundColor(Color.GREEN);
+                tv_walk.setBackgroundColor(Color.LTGRAY);
+                tv_run.setBackgroundColor(Color.LTGRAY);
+                tv_cycle.setBackgroundColor(Color.LTGRAY);
+                tv_incar.setBackgroundColor(Color.LTGRAY);
             }
         });
 
@@ -135,7 +150,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                         measureInstance.add(new DenseInstance(1.0,instanceValue));
 
-                        String loadModelName = "knnmodel.model";
+//                        String loadModelName = "knnmodel.model";
+                        String loadModelName = "tree_j48.model";
+
 
                         try {
                             activityRegModel(loadModelName,measureInstance);
@@ -231,8 +248,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         double value = cls.classifyInstance(measureInstance.instance(pos));
 
-        System.out.println(measureInstance.classAttribute().value((int)value));
+        String type = measureInstance.classAttribute().value((int)value);
 
+        if(type.equals("A")) {
+            tv_stand.setBackgroundColor(Color.GREEN);
+            tv_walk.setBackgroundColor(Color.LTGRAY);
+            tv_run.setBackgroundColor(Color.LTGRAY);
+            tv_cycle.setBackgroundColor(Color.LTGRAY);
+            tv_incar.setBackgroundColor(Color.LTGRAY);
+        } else if(type.equals("B")) {
+            tv_stand.setBackgroundColor(Color.LTGRAY);
+            tv_walk.setBackgroundColor(Color.GREEN);
+            tv_run.setBackgroundColor(Color.LTGRAY);
+            tv_cycle.setBackgroundColor(Color.LTGRAY);
+            tv_incar.setBackgroundColor(Color.LTGRAY);
+        } else if(type.equals("C")) {
+            tv_stand.setBackgroundColor(Color.LTGRAY);
+            tv_walk.setBackgroundColor(Color.LTGRAY);
+            tv_run.setBackgroundColor(Color.GREEN);
+            tv_cycle.setBackgroundColor(Color.LTGRAY);
+            tv_incar.setBackgroundColor(Color.LTGRAY);
+        } else if(type.equals("D")) {
+            tv_stand.setBackgroundColor(Color.LTGRAY);
+            tv_walk.setBackgroundColor(Color.LTGRAY);
+            tv_run.setBackgroundColor(Color.LTGRAY);
+            tv_cycle.setBackgroundColor(Color.GREEN);
+            tv_incar.setBackgroundColor(Color.LTGRAY);
+        } else if(type.equals("E")) {
+            tv_stand.setBackgroundColor(Color.LTGRAY);
+            tv_walk.setBackgroundColor(Color.LTGRAY);
+            tv_run.setBackgroundColor(Color.LTGRAY);
+            tv_cycle.setBackgroundColor(Color.LTGRAY);
+            tv_incar.setBackgroundColor(Color.GREEN);
+        }
 
     }
 
