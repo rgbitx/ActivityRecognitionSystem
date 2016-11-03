@@ -149,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     accBuffer.add(acc);
                 }
                 count_acc++;
-
             }
 
         }
@@ -200,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if(isAccCal && isGyroCal) {
 
-            int totalVariablesNum = 9;
+            int totalVariablesNum = 5;
 
             // new an instance
             Instances measureInstance = new Instances("MeasureInstances", atts, 0);
@@ -255,7 +254,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
-    private void setInstanceAttributionValues(double[] instanceValue,
+    private void
+    setInstanceAttributionValues(double[] instanceValue,
                                               float[] inputData) {
 
         instanceValue[0] = inputData[0];
