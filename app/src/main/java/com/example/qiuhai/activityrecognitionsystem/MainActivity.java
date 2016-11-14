@@ -28,18 +28,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Sensor accSensor, gyroSensor, magSensor;
 
     MeasureCalculation measureCal;
+    FFT fft;
+    int fs = 50;
 
     ArrayList<float[]> accBuffer;
-    float acc_mean = 0, acc_std = 0, acc_max = 0, acc_min = 0;
+    float acc_rms = 0, acc_mean = 0, acc_std = 0, acc_max = 0, acc_min = 0, acc_psd_rms=0;
     ArrayList<float[]> gyroBuffer;
-    float gyro_mean = 0, gyro_std = 0, gyro_max = 0, gyro_min = 0;
-    int bufferSize = 500;
+    float gyro_rms = 0, gyro_mean = 0, gyro_std = 0, gyro_max = 0, gyro_min = 0;
+    int bufferSize = 16;
     int calDelay;
     boolean isCal;
     int count_acc;
     int count_gyro;
     boolean isAccCal = false;
     boolean isGyroCal = false;
+
+    float[] input;
 
     float[] acc;
     float[] gyro;
@@ -65,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         tv_incar = (TextView) findViewById(R.id.tv_incar);
 
         measureCal = new MeasureCalculation();
+        fft = new FFT(bufferSize);
 
         accBuffer = new ArrayList<>();
         gyroBuffer = new ArrayList<>();
@@ -80,6 +85,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         // set the attributions of the instance
         setInstanceAttributions(atts, classVal);
+
+//        //test FFT
+//        // Single sin
+//        int N = 8;
+//        double[] re = new double[N];
+//        double[] im = new double[N];
+//
+//        for(int i=0; i<N; i++) {
+//           re[i] = Math.cos(2*Math.PI*i / N);
+//           im[i] = 0;
+//         }
+//
+//        FFT fft1 = new FFT(N);
+//        beforeAfter(fft1, re, im);
 
 
         //get sensor manage
@@ -175,10 +194,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if(count_acc > bufferSize && (count_acc-bufferSize) % 150 == 0) {
             float[] acc = measureCal.ovalMod(accBuffer);
+            acc_rms = measureCal.rms(acc);
             acc_mean = measureCal.mean(acc);
             acc_std = measureCal.std(acc, acc_mean);
             acc_max = measureCal.max(acc);
             acc_min = measureCal.min(acc);
+
+            // calculate psd and mean frequency
+            double[] re = new double[bufferSize];
+            double[] im = new double[bufferSize];
+
+            for(int i=0; i<bufferSize; i++) {
+                re[i] = acc[i]-acc_mean;
+                im[i] = 0;
+            }
+            fft.fft(re,im);
+            acc_psd_rms = (float) fft.psd_rms(re,im,fs);
+
 
             isAccCal = true;
         }
@@ -187,8 +219,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if(count_gyro > bufferSize && (count_gyro-bufferSize) % 150 == 0) {
 
             float[] gyro = measureCal.ovalMod(gyroBuffer);
-            gyro_mean = measureCal.mean(gyro);
-
+            gyro_rms = measureCal.mean(gyro);
             gyro_mean = measureCal.mean(gyro);
             gyro_std = measureCal.std(gyro, gyro_mean);
             gyro_max = measureCal.max(gyro);
@@ -208,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // set measurement to instance values
             double[] instanceValue = new double[totalVariablesNum];
 
-            float[] input = new float[] {acc_mean, acc_std, gyro_mean, gyro_std};
+            input = new float[] {acc_rms, acc_std, gyro_rms, gyro_std};
 
             // set measure value to each attribution in the instance
             setInstanceAttributionValues(instanceValue, input);
@@ -264,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         instanceValue[3] = inputData[3];
 
         // class 1
-        instanceValue[8] = 0; // CLASS
+        instanceValue[4] = 0; // CLASS
     }
 
 
@@ -318,6 +349,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
     }
+
+
+       protected void beforeAfter(FFT fft, double[] re, double[] im) {
+             System.out.println("Before: ");
+             printReIm(re, im);
+             fft.fft(re, im);
+             double[] power = fft.psd(re,im,fs);
+             System.out.println("After: ");
+             printReIm(re, im);
+           }
+
+       protected void printReIm(double[] re, double[] im) {
+             System.out.print("Re: [");
+             for(int i=0; i<re.length; i++)
+                   System.out.print(((int)(re[i]*1000)/1000.0) + " ");
+
+             System.out.print("]\nIm: [");
+             for(int i=0; i<im.length; i++)
+                   System.out.print(((int)(im[i]*1000)/1000.0) + " ");
+
+             System.out.println("]");
+       }
 
 
 

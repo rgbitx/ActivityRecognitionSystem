@@ -28,6 +28,40 @@ public class MeasureCalculation {
     }
 
 
+    public float rms(float[] input) {
+        if(input == null || input.length == 0)
+            return 0;
+
+        float sum = 0;
+        float results = 0;
+
+        for(int i=0; i < input.length; i++){
+            sum += input[i]*input[i];
+        }
+        results = (float) Math.sqrt(sum / input.length);
+
+        return results;
+
+    }
+
+    public double rms(double[] input) {
+        if(input == null || input.length == 0)
+            return 0;
+
+        float sum = 0;
+        float results = 0;
+
+        for(int i=0; i < input.length; i++){
+            sum += input[i]*input[i];
+        }
+        results = (float) Math.sqrt(sum / input.length);
+
+        return results;
+
+    }
+
+
+
     public float mean(float[] input) {
         if(input == null || input.length == 0)
             return 0;
